@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 
 import {
   Container,
@@ -55,6 +55,11 @@ function Basket(props) {
   }, [])
 
 
+
+
+
+
+
   const changeCountProduct = (productId, typeMove) => {
     let oldBasket = props.syncBasket;
     let newBasket = [];
@@ -96,7 +101,7 @@ function Basket(props) {
     }
 
     props.updatedBasket(newBasket);
-    props.countProductsBasket(props.syncBasket, props.syncProducts);
+    props.fetchedProducts(newBasket);
   };
 
 
@@ -120,8 +125,8 @@ function Basket(props) {
       .filter((item) => item != null);
 
 
-    props.updatedBasket(newBasket);
-    props.countProductsBasket(newBasket, props.syncProducts);
+      props.updatedBasket(newBasket);
+      props.fetchedProducts(newBasket);
   }
 
 
@@ -146,7 +151,7 @@ function Basket(props) {
                   >
                     <Grid item={true} container spacing={2} align="center">
                       <Grid item={true} md={3} xs={12}>
-                        <img src={`http://delivery-food/api/img/products/${product.img}`} className={classes.basketImg} />
+                      <Link to={`/product/${product.productId}`}><img src={`http://delivery-food/api/img/products/${product.img}`} className={classes.basketImg} /></Link>
                         <Typography className={classes.basketName}>
                           {product.productName}
                         </Typography>

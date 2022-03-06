@@ -286,11 +286,12 @@ if(isset($_POST)) {
   
 
          $user_id = getUserId($mysqli, $_POST['token']);
+    
 
        $query_add = "INSERT INTO `orders` (`order_number`, `date`, `time`, `summa`, `oplata`, `change`, `status`, `address`, `descriptions`, `user_id`) 
        VALUES ('".$generatednumberorder."','".$date."' ,'".$time."' ,'".$count_money."', '".$payment."', '".$change."', 'Создан', '".$address."', '".$description."', ".$user_id.")";
        $query = mysqli_query($mysqli, $query_add);
-
+     
 
 
        $data_products=[];
@@ -416,7 +417,7 @@ function getSubCategoroes($mysqli, $arr) {
 
 
 function getUserId($mysqli, $token) {
-    $query_add2 = "SELECT * FROM `users` WHERE token='".$_GET['token']."'";
+    $query_add2 = "SELECT * FROM `users` WHERE token='".$token."'";
     $res2 = mysqli_query($mysqli, $query_add2);
     while ($result =  mysqli_fetch_assoc($res2)) {
         $data1[] = $result;

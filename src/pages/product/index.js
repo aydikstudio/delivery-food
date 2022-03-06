@@ -157,7 +157,7 @@ function Product(props) {
     <>
       <main>
         <Container className={classes.cardGrid} maxWidth="md">
-          <Zagalovok text="Домик в деревне" />
+          <Zagalovok text={product.productName} />
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6} md={4}>
               {product.img && <img className={classes.img}  src={`http://delivery-food/api/img/products/${product.img}`} /> }

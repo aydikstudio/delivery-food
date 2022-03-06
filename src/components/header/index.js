@@ -348,6 +348,11 @@ function Header(props) {
               }}
             />
           </DialogContentText>
+          <Link to="/agree" target="_blank" style={{fontSize: '8px', color: "#adadad" , textAlign: "center"}}>
+        НАЖИМАЯ КНОПКУ «ВОЙТИ»,<br/> Я ДАЮ СВОЕ СОГЛАСИЕ НА ОБРАБОТКУ
+        <br/> МОИХ ПЕРСОНАЛЬНЫХ ДАННЫХ.
+        </Link>
+
         </DialogContent>
 
         <DialogActions>

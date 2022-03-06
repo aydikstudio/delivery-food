@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { connect } from "react-redux";
-import { updatedBasket, countProductsBasket } from "../../redux/actions";
+import { updatedBasket, countProductsBasket, fetchedProducts } from "../../redux/actions";
 
 import {
   Container,
@@ -101,14 +101,16 @@ function Category(props) {
   }
 
   const clickToBasket = (productId) => {
-    if (!props.syncBasket.some((item2) => item2.productId == productId)) {
-      props.syncBasket.push({
+    let oldBasket = props.syncBasket;
+    if (!oldBasket.some((item2) => item2.productId == productId)) {
+      oldBasket.push({
         productId,
         count: 1,
       });
 
-      props.updatedBasket(props.syncBasket);
-      props.countProductsBasket(props.syncBasket, products);
+     
+          props.updatedBasket(oldBasket);
+          props.fetchedProducts(oldBasket);
     }
   };
 
@@ -140,7 +142,6 @@ function Category(props) {
               return item;
             }
 
-            console.log(item);
           } else {
             return item;
           }
@@ -149,7 +150,8 @@ function Category(props) {
     }
 
     props.updatedBasket(newBasket);
-    props.countProductsBasket(props.syncBasket, products);
+    props.fetchedProducts(newBasket);
+    
   };
 
 
@@ -272,11 +274,14 @@ function Category(props) {
 const mapDispatchToProps = {
   updatedBasket,
   countProductsBasket,
+  fetchedProducts
 };
 
 const mapStateToProps = (state) => {
   return {
     syncBasket: state.basket.basket,
+    syncCount: state.basket.count,
+    syncProducts: state.basket.fetchedProducts
   };
 };
 
