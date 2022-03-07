@@ -141,30 +141,26 @@ if(isset($_GET)) {
 
 
     if($_GET['type'] == 'allgetproductsbyidcategories' ) {
-        $query_add_products = "SELECT * FROM products  WHERE  category_id=".$_GET['id'];
-        $res_products = mysqli_query($mysqli, $query_add_products);
-        while ($result_products =  mysqli_fetch_assoc($res_products)) {
-            $data_products[] = $result_products;
-         }
+        $currentCategory = $_GET['id'];
+        $arr = [];
+        array_push($arr, $currentCategory);
 
-        //  $query_add_categories = "SELECT * FROM categories  WHERE  parent_id=".$_GET['id'];
-        // $res_categories = mysqli_query($mysqli, $query_add_categories);
-        // $count = mysqli_num_rows($res_categories);
-        // if($count > 0) {
+        $arr = getSubCategoroes($mysqli, $arr, $arr);
 
-        //     while ($result =  mysqli_fetch_assoc($res_categories)) {
-        //         $data[] = $result;
-        //      }
-            
-             
-        //      $arr = getSubCategoroes($mysqli, $data);
 
-        //      $data_categories = array_merge($data, $arr);
-             
-        // }
+        foreach ($arr as &$value) {
+            $query_add_products = "SELECT * FROM products  WHERE  category_id=".$value;
+            $res_products = mysqli_query($mysqli, $query_add_products);
+            while ($result_products =  mysqli_fetch_assoc($res_products)) {
+                $data_products[] = $result_products;
+             }
+
+        }
         
-         
-         echo json_encode($data_products);
+  
+        
+        echo  json_encode($data_products);
+
     }
 
 
@@ -173,14 +169,18 @@ if(isset($_GET)) {
 
 
     if($_GET['type'] == 'login' ) {
+        $phone = $_GET['phone'];
+        if($phone[0] != 7) {
+            $phone[0] = 7;
+        }
         $token = generate_string($permitted_chars, 100);
-        $sql = "SELECT * FROM `users` WHERE `phone` = '".$_GET['phone']."'";
+        $sql = "SELECT * FROM `users` WHERE `phone` = '".$phone."'";
         $query = mysqli_query($mysqli, $sql);
      
         $count = mysqli_num_rows($query);
 
         if($count ==  0) {
-            $query_add = "INSERT INTO `users`(`phone`, `token`)  VALUES ('".$_GET['phone']."', '".$token."') ";
+            $query_add = "INSERT INTO `users`(`phone`, `token`)  VALUES ('".$phone."', '".$token."') ";
             $res = mysqli_query($mysqli, $query_add);
         } else {
             while ($result =  mysqli_fetch_assoc($query)) {
@@ -385,33 +385,35 @@ function generate_string($input, $strength = 16) {
     return $random_string;
 }
 
-function getSubCategoroes($mysqli, $arr) {
+function getSubCategoroes($mysqli, $arr, $arr_temp) {
 
-    $data_categories = [];
+   
+    $arr_new = $arr; 
+    $arr_temp1 = $arr_temp;
 
-  
-    for($i = 0; $i < count($arr); $i++) {
-        $query_add_categories = "SELECT * FROM categories  WHERE  parent_id=".$arr[$i]['parent_id'];
-        $res_categories = mysqli_query($mysqli, $query_add_categories);
-        $count = mysqli_num_rows($res_categories);
-        if($count > 0) {
 
-            while ($result =  mysqli_fetch_assoc($res_categories)) {
-                $data_categories[] = $result;
-             }
+        foreach ($arr_temp as &$value) {
+            $query_add_categories = "SELECT * FROM categories  WHERE  parent_id=".$value;
+           $res_categories = mysqli_query($mysqli, $query_add_categories);
+           $count = mysqli_num_rows($res_categories);
+           $arr_temp1 =  [];
+           if($count > 0) {
+   
+               while ($result =  mysqli_fetch_assoc($res_categories)) {
+                   array_push($arr_temp, $result['category_id']);
+                   array_push($arr_new, $result['category_id']);
+                }
 
+                
+                   getSubCategoroes($mysqli, $arr_temp1, $arr_new);
+           } 
+       }
+ 
+        return $arr_new;
     
 
-            //  getSubCategoroes($mysqli, $data_categories);
-        } 
-        else {
-            break;
-        }
-        
-       
-    }
-   
-    return  $data_categories;
+  
+  
 }
 
 
