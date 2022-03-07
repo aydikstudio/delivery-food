@@ -74,6 +74,9 @@ function Header(props) {
   const [searchCategories, setSearchCategories] = useState([]);
   const [searchProducts, setSearchProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [step, setStep] = useState(1);
+  const [code, setCode] = useState('');
+  const [codeVerify, setCodeVerifyCode] = useState('');
 
   const handleClick1 = (event) => {
     setAnchorEl1(event.currentTarget);
@@ -135,22 +138,27 @@ function Header(props) {
   };
 
   const handleAuth = async () => {
-    if (phone.length > 0) {
-      await axios
-        .get("http://delivery-food/api/managedata.php", {
-          params: {
-            type: "login",
-            phone: phone,
-          },
-        })
-        .then(function (response) {
-          localStorage.setItem("user_token", response.data);
-          window.location.reload();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    if(code == codeVerify) {
+      if (phone.length > 0) {
+        await axios
+          .get("http://delivery-food/api/managedata.php", {
+            params: {
+              type: "login",
+              phone: phone,
+            },
+          })
+          .then(function (response) {
+            localStorage.setItem("user_token", response.data);
+            window.location.reload();
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+    } else {
+      alert("Неверные последние четыре цифры из входящего номера");
     }
+   
   };
 
   const clearStorage = () => {
@@ -172,6 +180,25 @@ function Header(props) {
     .catch(function (error) {
       console.log(error);
     });
+  }
+
+
+  async function sendCode() {
+    
+    const formData = new FormData();
+    formData.append("user", "aydikstudio");
+    formData.append("pass", "aydikxtvgbjystudiogreensms");
+    formData.append("to", phone);
+
+    await axios
+      .post("https://api3.greensms.ru/voice/send", formData)
+      .then(function (response) {
+        setCodeVerifyCode(response.data.code)
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+   
   }
 
   const open = Boolean(anchorEl);
@@ -335,11 +362,13 @@ function Header(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">{"Войти"}</DialogTitle>
-        <DialogContent>
+        {step == 1 ? (
+          <div>
+          <DialogContent>
           <DialogContentText id="alert-dialog-description">
             <TextField
               placeholder="79999999999"
-              phone={phone}
+              value={phone}
               onChange={(e) => handleChangePhone(e.target.value)}
               onKeyPress={(event) => {
                 if (!/[0-9]/.test(event.key)) {
@@ -354,24 +383,59 @@ function Header(props) {
         </Link>
 
         </DialogContent>
+         <DialogActions>
+         <Button
+           onClick={handleClose}
+           variant="text"
+           style={{ color: "#000" }}
+         >
+           Закрыть
+         </Button>
+         <Button
+           color="success"
+           variant="contained"
+           onClick={(e) => sendCode()}
+           disabled={phone ? false : true}
+         >
+           Войти
+         </Button>
+       </DialogActions>
+       </div>
+        ): (
+          <div>
+          <DialogContent style={{marginTop: "-25px"}}>
+            <p>Введите <b>последние четыре цифры</b> из <b>входящего номера</b> </p>
+          <DialogContentText id="alert-dialog-description">
+            <TextField
+              placeholder="Введите код из смс"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+          </DialogContentText>
 
+        </DialogContent>
         <DialogActions>
-          <Button
-            onClick={handleClose}
-            variant="text"
-            style={{ color: "#000" }}
-          >
-            Закрыть
-          </Button>
-          <Button
-            color="success"
-            variant="contained"
-            onClick={handleAuth}
-            disabled={phone ? false : true}
-          >
-            Войти
-          </Button>
-        </DialogActions>
+        <Button
+          onClick={(e) => setStep(1)}
+          variant="text"
+          style={{ color: "#000" }}
+        >
+          Назад
+        </Button>
+        <Button
+          color="success"
+          variant="contained"
+          onClick={handleAuth}
+          disabled={code ? false : true}
+        >
+          Войти
+        </Button>
+      </DialogActions>
+      </div>
+        )}
+        
+
+       
       </Dialog>
     </>
   );
