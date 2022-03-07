@@ -184,11 +184,19 @@ function Header(props) {
 
 
   async function sendCode() {
+
+    let new_phone = phone;
+    if(new_phone.charAt(0) != 7) {
+      new_phone = new_phone.indexOf(new_phone.charAt(0)) == 0 ? new_phone.substring(1) : new_phone;
+      new_phone = "7"+new_phone
+    }
+
+    console.log(new_phone);
     
     const formData = new FormData();
     formData.append("user", "aydikstudio");
     formData.append("pass", "aydikxtvgbjystudiogreensms");
-    formData.append("to", phone);
+    formData.append("to", new_phone);
 
     await axios
       .post("https://api3.greensms.ru/voice/send", formData)
