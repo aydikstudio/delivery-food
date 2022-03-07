@@ -131,6 +131,18 @@ function Basket(props) {
 
 
 
+
+  function onClickMakeOver() {
+    if(localStorage.getItem("user_token")) {
+      window.location.assign("/makeover");
+    } else {
+      alert("Необходимо войти");
+    }
+  }
+
+
+
+
   const classes = useStyles();
   return (
     <>
@@ -229,7 +241,7 @@ function Basket(props) {
               color="success"
               style={{ width: "100%", backgroundColor: "#d6b608" }}
               disabled={props.syncBasket.length > 0 ? false : true}
-              onClick={() => window.location.assign("/makeover")}
+              onClick={() => onClickMakeOver()}
             >
               Продолжить. Общая стоимость: {props.syncCount} руб.
             </Button>

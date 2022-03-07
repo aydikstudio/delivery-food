@@ -13,8 +13,9 @@ import {
   Button,
   CardActions,
   Box,
+  Fab,
   Pagination,
-  Fab
+  PaginationItem
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { useTheme } from "@mui/material/styles";
@@ -22,6 +23,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import Zagalovok from "../../components/zagalovok";
+// import Pagination from "../../components/pagination";
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -65,12 +67,31 @@ function Category(props) {
   const [products, setProducts] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [salePerPage] = useState(50);
+  const [salePerPage] = useState(20);
+  const [currentCategory, setCurrentCategory] = useState({});
 
   useEffect(() => {
     getArrayofProducts();
     getSubcategories();
+    getcategorybyid();
   }, []);
+
+
+
+  async function getcategorybyid() {
+    await axios
+    .get(
+      "http://delivery-food/api/managedata.php?type=getcategoriesbyid&id=" +
+        id
+    )
+    .then((res) => {
+      if (res.data != null) {
+        setCurrentCategory(res.data[0]);
+      }
+    });
+}
+
+
 
   async function getSubcategories() {
     await axios
@@ -158,10 +179,12 @@ function Category(props) {
 
   const lastShipmentIndex = currentPage * salePerPage;
   const firstShipmentIndex = lastShipmentIndex - salePerPage;
-  const currentShipment = products.slice(firstShipmentIndex, lastShipmentIndex);
+  const currentShipment = products.slice(
+    firstShipmentIndex,
+    lastShipmentIndex
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   const classes = useStyles();
 
 
@@ -169,7 +192,7 @@ function Category(props) {
   return (
     <>
       <Container className={classes.cardGrid} maxWidth="md">
-        <Zagalovok text="Молочные продукты" />
+        <Zagalovok text={currentCategory.name} />
         {subcategories.length > 0 && <Box mb={5}>
           {subcategories.length > 0 &&
            subcategories.map((item) => {
@@ -259,13 +282,15 @@ function Category(props) {
             : "Нет данных"}
              
         </Grid>
-        <Pagination
-          style={{marginTop: "20px"}}
-          countriesPerPage={salePerPage}
-          totalCountries={products.length}
-          paginate={paginate}
-          currentPage={currentPage}
-        />
+        <Grid container mt={15}>
+        <Pagination count={products.length} renderItem={(item) => (
+    <PaginationItem
+      {...item}
+      onClick={(e) => paginate(item.page)}
+    />
+  )}/>
+        </Grid>
+
       </Container>
     </>
   );

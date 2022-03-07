@@ -19,6 +19,16 @@ if(isset($_GET)) {
     }
 
 
+    if($_GET['type'] == 'getcategoriesbyid' ) {
+        $query_add = "SELECT * FROM `categories` WHERE category_id=".$_GET['id'];
+        $res = mysqli_query($mysqli, $query_add);
+        while ($result =  mysqli_fetch_assoc($res)) {
+            $data[] = $result;
+         }
+         echo json_encode($data);
+    }
+
+
     if($_GET['type'] == 'allgetsubcategories' ) {
         $query_add = "SELECT * FROM `categories` WHERE parent_id=".$_GET['id'];
         $res = mysqli_query($mysqli, $query_add);
@@ -116,7 +126,7 @@ if(isset($_GET)) {
     if($_GET['type'] == 'getaddress' ) {
         $user_id = getUserId($mysqli, $_GET['token']);
 
-        $query_add = "SELECT `address` FROM orders  WHERE user_id='".$user_id."' LIMIT 3";
+        $query_add = "SELECT DISTINCT `address` FROM orders  WHERE user_id='".$user_id."'  ORDER BY order_id DESC LIMIT 3";
         $res = mysqli_query($mysqli, $query_add);
         while ($result =  mysqli_fetch_assoc($res)) {
             $data[] = $result;
@@ -128,7 +138,7 @@ if(isset($_GET)) {
     if($_GET['type'] == 'getdescriptions' ) {
         $user_id = getUserId($mysqli, $_GET['token']);
 
-        $query_add = "SELECT `descriptions` FROM orders  WHERE user_id='".$user_id."' LIMIT 3";
+        $query_add = "SELECT DISTINCT `descriptions` FROM orders  WHERE user_id='".$user_id."'  ORDER BY order_id DESC LIMIT 3";
         $res = mysqli_query($mysqli, $query_add);
         while ($result =  mysqli_fetch_assoc($res)) {
             $data[] = $result;

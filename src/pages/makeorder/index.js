@@ -188,7 +188,7 @@ function MakeOver(props) {
                 <Fab
                   onClick={(e) => setAddressChoose(item.address)}
                   variant="extended"
-                  style={{ minwidth: "100px", minheight: "100px" }}
+                  style={{ minwidth: "100px", minheight: "100px", marginRight: "20px" }}
                 >
                   {item.address}
                 </Fab>
@@ -226,7 +226,7 @@ function MakeOver(props) {
                 <Fab
                   onClick={(e) => setDescriptionChoose(item.descriptions)}
                   variant="extended"
-                  style={{ minwidth: "100px", minheight: "100px" }}
+                  style={{ minwidth: "100px", minheight: "100px",  marginRight: "20px" }}
                 >
                   {item.descriptions}
                 </Fab>
